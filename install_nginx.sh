@@ -5,28 +5,31 @@
 
 #!/bin/bash
 export PATH=$PATH:/bin:/usr/bin:/usr/local/bin:/usr/sbin:/opt/nignx
+
 NGINX_ROOT="/data/www/wwwroot"
+NGINX_PATH="/etc/nginx"
+BIN_PATH="/usr/sbin"
+LOG_PATH="/var/log/nginx"
 NGINX_PORT=80
 NGINX_USER=nginx
 NGINX_GROUP=nginx
-NGINX_VERSION="nginx-1.16.1"
-NGINX_PREFIX="/opt/nginx"
+NGINX_VERSION="nginx-1.19.1"
 NGINX_PCRE_VERSION="pcre-8.40"
 NGINX_ZLIB_VERSION="zlib-1.2.11"
 NGINX_OPENSSL_VERSION="openssl-1.1.0l"
 NGINX_COMPILE_COMMAND="./configure \
---prefix=/opt/nginx \
---sbin-path=/opt/nginx/sbin/nginx \
---conf-path=/opt/nginx/etc/nginx.conf \
---error-log-path=/opt/nginx/log/nginx.log \
---pid-path=/opt/nginx/var/run/nginx.pid \
---lock-path=/opt/nginx/var/lock/nginx.lock  \
---http-log-path=/opt/nginx/log/access.log \
---http-client-body-temp-path=/opt/nginx/client_temp \
---http-proxy-temp-path=/opt/nginx/proxy_temp \
---http-fastcgi-temp-path=/opt/nginx/fastcgi_temp \
---http-uwsgi-temp-path=/opt/nginx/uwsgi_temp \
---http-scgi-temp-path=/opt/nginx/scgi_temp \
+--prefix=${NINGX_PATH} \
+--sbin-path=${BIN_PATH}/nginx \
+--conf-path=${NINGX_PATH}/nginx.conf \
+--error-log-path=${LOG_PATH}/error.log \
+--pid-path=/var/run/nginx.pid \
+--lock-path=/var/lock/nginx.lock  \
+--http-log-path=${LOG_PATH}/access.log \
+--http-client-body-temp-path=${NINGX_PATH}/client_temp \
+--http-proxy-temp-path=${NINGX_PATH}/proxy_temp \
+--http-fastcgi-temp-path=${NINGX_PATH}/fastcgi_temp \
+--http-uwsgi-temp-path=${NINGX_PATH}/uwsgi_temp \
+--http-scgi-temp-path=${NINGX_PATH}/scgi_temp \
 --with-pcre=../$NGINX_PCRE_VERSION \
 --with-openssl=../$NGINX_OPENSSL_VERSION \
 --with-zlib=../$NGINX_ZLIB_VERSION \
@@ -36,21 +39,24 @@ NGINX_COMPILE_COMMAND="./configure \
 --with-http_ssl_module \
 --with-http_v2_module \
 --with-http_gzip_static_module  \
---with-file-aio --with-ipv6 \
+--with-file-aio \
+--with-ipv6 \
 --with-http_realip_module \
 --with-http_gunzip_module \
 --with-http_secure_link_module \
 --with-http_stub_status_module
 "
 
+printf "clear all environments"
+rm -rf zlib* pcre* nginx*  openssl*
 
 echo "install dependent package"
 yum install -y nmap unzip wget lsof xz net-tools gcc make gcc-c++ epel-release
 
-echo "同步服务器时间"
+echo "sync ntp"
 ntpdate asia.pool.ntp.org
 
-#关闭防火墙
+echo "stop firewalld"
 systemctl stop firewalld
 systemctl disable firewalld
 
@@ -70,7 +76,7 @@ if [ -f $NGINX_ZLIB_VERSION.tar.gz ]; then
 else
     wget -c https://www.zlib.net/$NGINX_ZLIB_VERSION.tar.gz
 fi
-tar zxvf $NGINX_ZLIB_VERSION.tar.gz 
+tar zxf $NGINX_ZLIB_VERSION.tar.gz 
 cd $NGINX_ZLIB_VERSION
 ./configure && make && make install
 cd ../
@@ -107,7 +113,8 @@ useradd nginx -s /sbin/nologin -M
 $NGINX_COMPILE_COMMAND
 make  && make install
 
-cat  > /etc/init.d/nginx << 'EOF'
+
+cat  > /etc/init.d/nginx << EOF
 #!/bin/sh
 # chkconfig: - 85 15
 
@@ -119,10 +126,10 @@ if [ -f /etc/sysconfig/nginx ]; then
 fi
 
 prog=nginx
-nginx=\${NGINX-/opt/nginx/sbin/nginx}
-conffile=\${CONFFILE-/opt/nginx/etc/nginx.conf}
-lockfile=\${LOCKFILE-/opt/nginx/var/lock/nginx.lock}
-pidfile=\${PIDFILE-/opt/nginx/var/run/nginx.pid}
+nginx=${BIN_PATH}/nginx
+conffile=${NGINX_PATH}/nginx.conf
+lockfile="/var/lock/nginx.lock"
+pidfile="/var/run/nginx.pid"
 SLEEPMSEC=100000
 RETVAL=0
 
@@ -234,7 +241,7 @@ EOF
 chmod +x /etc/init.d/nginx
 chkconfig --add nginx
 chkconfig nginx on
-service nginx start
+systemctl start nginx
 ss -tunlp | grep nginx
 if [ $? -eq 0 ];then
     echo "install nginx sucessful"
