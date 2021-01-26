@@ -50,8 +50,10 @@ NGINX_COMPILE_COMMAND="./configure \
 printf "clear all environments"
 rm -rf zlib* pcre* nginx*  openssl*
 
+rm -rf /etc/yum.repos.d/epel*
+
 echo "install dependent package"
-yum install -y nmap unzip wget lsof xz net-tools gcc make gcc-c++ epel-release
+yum install -y nmap unzip wget lsof xz net-tools gcc make gcc-c++ epel-release ntp
 
 echo "sync ntp"
 ntpdate asia.pool.ntp.org
