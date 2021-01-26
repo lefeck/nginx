@@ -4,7 +4,7 @@
 # Using the operating system Centos 6 and 7
 
 #!/bin/bash
-export PATH=$PATH:/bin:/usr/bin:/usr/local/bin:/usr/sbin
+export PATH=$PATH:/bin:/usr/bin:/usr/local/bin:/usr/sbin: #导入环境变量,nginx二进制文件的路径
 
 NGINX_ROOT="/data/www/wwwroot"
 NGINX_PATH="/etc/nginx"
@@ -111,7 +111,7 @@ tar zxvf $NGINX_VERSION.tar.gz
 cd $NGINX_VERSION
 useradd nginx -s /sbin/nologin -M
 $NGINX_COMPILE_COMMAND
-make  && make install
+make && make install
 
 
 cat  > /etc/init.d/nginx << EOF
