@@ -55,6 +55,8 @@ rm -rf /etc/yum.repos.d/epel*
 echo "install dependent package"
 yum install -y nmap unzip wget lsof xz net-tools gcc make gcc-c++ epel-release ntp
 
+mkdir -p /data/www/wwwroot
+
 echo "sync ntp"
 ntpdate asia.pool.ntp.org
 timedatectl set-timezone "Asia/Shanghai"
