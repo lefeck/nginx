@@ -74,7 +74,7 @@ fi
 if [ -f $NGINX_ZLIB_VERSION.tar.gz ]; then
     echo $NGINX_ZLIB_VERSION.tar.gz is exist.
 else
-    wget -c https://www.zlib.net/$NGINX_ZLIB_VERSION.tar.gz
+    wget -c https://www.zlib.net/$NGINX_ZLIB_VERSION.tar.gz --no-check-certificate
 fi
 tar zxf $NGINX_ZLIB_VERSION.tar.gz 
 cd $NGINX_ZLIB_VERSION
@@ -86,7 +86,7 @@ cd ../
 if [ -f $NGINX_PCRE_VERSION.tar.gz ]; then
     echo $NGINX_PCRE_VERSION.tar.gz is exist.
 else
-    wget https://ftp.pcre.org/pub/pcre/${NGINX_PCRE_VERSION}.tar.gz
+    wget https://ftp.pcre.org/pub/pcre/${NGINX_PCRE_VERSION}.tar.gz --no-check-certificate
 fi
 tar zxvf $NGINX_PCRE_VERSION.tar.gz 
 cd $NGINX_PCRE_VERSION
@@ -98,7 +98,7 @@ cd ../
 if [ -f  $NGINX_OPENSSL_VERSION.tar.gz ]; then
     echo $NGINX_OPENSSL_VERSION.tar.gz is exist.
 else
-    wget https://www.openssl.org/source/${NGINX_OPENSSL_VERSION}.tar.gz
+    wget https://www.openssl.org/source/${NGINX_OPENSSL_VERSION}.tar.gz --no-check-certificate
 fi
 
 if [ -f  $NGINX_VERSION.tar.gz ]; then
