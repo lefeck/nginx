@@ -4,7 +4,7 @@
 # Using the operating system Centos 6 and 7
 
 #!/bin/bash
-export PATH=$PATH:/bin:/usr/bin:/usr/local/bin:/usr/sbin:/opt/nignx
+export PATH=$PATH:/bin:/usr/bin:/usr/local/bin:/usr/sbin
 
 NGINX_ROOT="/data/www/wwwroot"
 NGINX_PATH="/etc/nginx"
