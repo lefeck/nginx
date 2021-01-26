@@ -57,6 +57,7 @@ yum install -y nmap unzip wget lsof xz net-tools gcc make gcc-c++ epel-release n
 
 echo "sync ntp"
 ntpdate asia.pool.ntp.org
+timedatectl set-timezone asia/shanghai
 
 echo "stop firewalld"
 systemctl stop firewalld
