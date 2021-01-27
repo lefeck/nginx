@@ -125,8 +125,8 @@ if [ -f /etc/sysconfig/nginx ]; then
 fi
 
 prog=nginx
-nginx=${BIN_PATH}/nginx
-conffile=${NGINX_PATH}/nginx.conf
+nginx=##BIN_PATH##/nginx
+conffile=##NGINX_PATH##/nginx.conf
 lockfile=/var/lock/nginx.lock
 pidfile=/var/run/nginx.pid
 SLEEPMSEC=100000
