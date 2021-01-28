@@ -48,7 +48,7 @@ NGINX_COMPILE_COMMAND="./configure \
 --with-http_stub_status_module"
 
 printf "clear all environments\n"
-#rm -rf zlib* pcre* nginx*  openssl*
+rm -rf zlib* pcre* nginx*  openssl*
 rm -rf /etc/yum.repos.d/epel*
 
 echo "install dependent package"
