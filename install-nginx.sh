@@ -114,7 +114,7 @@ $NGINX_COMPILE_COMMAND
 make && make install
 cd ../
 
-cat > nginx.service << EOF
+cat > /usr/lib/systemd/system/nginx.service << EOF
 [Unit]
 Description=nginx 
 After=network.target
