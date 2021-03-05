@@ -41,11 +41,23 @@ NGINX_COMPILE_COMMAND="./configure \
 --with-http_gzip_static_module  \
 --with-file-aio \
 --with-ipv6 \
+--with-http_sub_module \
+--with-http_dav_module \
+--with-http_flv_module \
+--with-http_addition_module \
+--with-http_mp4_module  \
 --with-http_realip_module \
 --with-http_gunzip_module \
 --with-http_secure_link_module \
---with-debug \
---with-http_stub_status_module"
+--with-http_stub_status_module \
+--with-http_auth_request_module \
+--add-module=/opt/echo-nginx-module-0.61 \
+--with-debug"
+
+
+cd /opt
+wget https://github.com/openresty/echo-nginx-module/archive/v0.61.tar.gz
+tar zxf v0.61.tar.gz
 
 printf "clear all environments\n"
 rm -rf zlib* pcre* nginx*  openssl*
