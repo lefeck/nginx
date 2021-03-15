@@ -53,19 +53,22 @@ NGINX_COMPILE_COMMAND="./configure \
 --with-http_auth_request_module \
 --with-http_slice_module \
 --add-module=/opt/echo-nginx-module-0.61 \
+--add-module=/opt/ngx_cache_purge \
 --with-debug"
+
+echo "install dependent package"
+yum install -y nmap unzip wget lsof xz net-tools gcc make gcc-c++ epel-release ntp git
 
 
 cd /opt
 wget https://github.com/openresty/echo-nginx-module/archive/v0.61.tar.gz
+git clone https://github.com/FRiCKLE/ngx_cache_purge
 tar zxf v0.61.tar.gz
 
 printf "clear all environments\n"
 rm -rf zlib* pcre* nginx*  openssl*
 rm -rf /etc/yum.repos.d/epel*
 
-echo "install dependent package"
-yum install -y nmap unzip wget lsof xz net-tools gcc make gcc-c++ epel-release ntp
 
 echo "sync ntp"
 ntpdate asia.pool.ntp.org
