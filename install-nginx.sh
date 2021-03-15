@@ -64,6 +64,7 @@ cd /opt
 wget https://github.com/openresty/echo-nginx-module/archive/v0.61.tar.gz
 git clone https://github.com/FRiCKLE/ngx_cache_purge
 tar zxf v0.61.tar.gz
+cd -
 
 printf "clear all environments\n"
 rm -rf zlib* pcre* nginx*  openssl*
@@ -156,6 +157,8 @@ systemctl daemon-reload
 systemctl enable nginx.service
 systemctl start nginx.service
 
+rm -rf zlib* pcre*  openssl*
+
 ss -tunlp | grep nginx
 if [ $? -eq 0 ];then
     echo "install nginx sucessful"
@@ -163,4 +166,5 @@ else
     echo "install nginx failed"
     exit 1
 fi
+
 
