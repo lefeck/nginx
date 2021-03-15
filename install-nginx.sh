@@ -158,7 +158,6 @@ systemctl daemon-reload
 systemctl enable nginx.service
 systemctl start nginx.service
 
-rm -rf zlib* pcre*  openssl*
 
 ss -tunlp | grep nginx
 if [ $? -eq 0 ];then
