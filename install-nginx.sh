@@ -91,7 +91,8 @@ fi
 if [ -f $NGINX_ZLIB_VERSION.tar.gz ]; then
     echo $NGINX_ZLIB_VERSION.tar.gz is exist.
 else
-    wget -c https://www.zlib.net/$NGINX_ZLIB_VERSION.tar.gz --no-check-certificate
+    wget -c https://nchc.dl.sourceforge.net/project/libpng/zlib/1.2.11/zlib-1.2.11.tar.gz
+    #wget -c https://www.zlib.net/$NGINX_ZLIB_VERSION.tar.gz --no-check-certificate
 fi
 tar zxvf $NGINX_ZLIB_VERSION.tar.gz 
 cd $NGINX_ZLIB_VERSION
