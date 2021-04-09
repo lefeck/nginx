@@ -7,8 +7,7 @@ while [[ true ]]; do
 done
 ```
 
-## 使用shell脚本生成自签名证书
-
+# 使用shell脚本生成自签名证书
 
 shell脚本的使用说明如下：
 
@@ -28,6 +27,7 @@ shell脚本的使用说明如下：
 - -h 查看脚本帮助。
 
 
+
 ### 脚本执行示例
 
 执行命令下面命令生成证书，生成pkcs12格式证书过程中会提示输入证书密码，请保持两次输入一致。虽然输入密码时可以直接回车设为空，由于某些使用证书的场景必须要密码，所以最好设置一个密码。生成的文件中ca.crt与ca.key为CA证书的公钥与私钥；test.crt与test.key为服务器证书的公钥与私钥；test.p12为pkcs12格式的文件，包含了公私钥。
@@ -36,9 +36,22 @@ shell脚本的使用说明如下：
 ./gen-cert.sh -a ecc -d test.com,a.com,*.a.com -n test
 ```
 
+
+
 ![img](https://upload-images.jianshu.io/upload_images/16251782-5188ca5ccd90b8f1.png?)
 
 
-[生成证书](https://www.jianshu.com/p/52fedb82ef53)
+
+生成的服务器证书中“颁发给”为test.com，即-d参数中指定的第一个域名。
+
+![img](https://upload-images.jianshu.io/upload_images/16251782-9ed9dad720cd0806.png?)
+
+签名算法采用的ECC算法。
+
+![img](https:////upload-images.jianshu.io/upload_images/16251782-d942d651fa4c7d84.png?)
+
+使用者可选名称包含了-d参数中指定的所有域名。
+
+![img](https:////upload-images.jianshu.io/upload_images/16251782-c401c17a76d928eb.png?)
 
 
