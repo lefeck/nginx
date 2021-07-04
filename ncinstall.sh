@@ -6,7 +6,6 @@
 #
 # exec shell script file  chmod +x ncinstall.sh && ./ncinstall.sh
 
-
 # set variable value
 DATE_N=`date "+%Y-%m-%d %H:%M:%S"`
 USER_N=`whoami`
@@ -19,6 +18,7 @@ DIR_T="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 USER="ncadmin"
 PASSWD="ncadmin"
 USER_HOME="/home/$USER/"
+NC_USER_HOME="/home/ncadmin/controller-installer"
 
 
 # Execution successful log printing path
@@ -75,6 +75,7 @@ function os_prechecks() {
     # disable selinux
     setenforce 0
     sed -i s/SELINUX=enforcing/SELINUX=disabled/ /etc/selinux/config
+    # disable firewall
     systemctl stop firewalld
     systemctl disable firewalld
     # disable swap parttion
@@ -82,60 +83,55 @@ function os_prechecks() {
 
     #configure ssh
     ssh=$(cat /etc/ssh/sshd_config | grep "UseDNS no")
-    echo ${ssh}
     if [ $? -eq 0 ]; then
-        log_info "the sshd configure "UseDNS no" already exists in file "
+        log_info "disabled ssh reverse domain name resolution"
     else
         sed -i '/#VersionAddendum none/a\UseDNS no' /etc/ssh/sshd_config
     fi
     sed -i "s/GSSAPIAuthentication yes/GSSAPIAuthentication no/g" /etc/ssh/sshd_config
     systemctl restart sshd
-
 }
 
 
 function add_ncuser() {
     useradd $USER
+    fn_log "Add user $USER"
     echo $PASSWD | passwd $USER --stdin  &>/dev/null
+    fn_log "Add password to $USER"
     chmod 777 /etc/sudoers
     ncuser=$(cat /etc/sudoers | grep "$USER")
-    echo ${ncuser}
     if [ $? -eq 0 ]; then
        echo  -e "\033[32m $USER is exist \033[0m" 
-       log_info "$USER is exist"
+       log_info "Allow $USER user to execute any command under any path already exists"
     else
        sed -i '/^root /a\ncadmin    ALL=(ALL)    ALL' /etc/sudoers
+       fn_log "Set allow $USER to run any commands anywhere"
     fi   
     chmod 440 /etc/sudoers
 }
 
-
-function install_pkg() {
-    $DIR_T
-    echo  -e "\033[32m offline install nginx controller Utilities \033[0m"
-    # offline install nginx controller Utilities
-    yum -y localinstall pkg/*; rm -rf pkg*
-    fn_log "offline install nginx controller"
-}
-
 # Deployment controller-installer 
 function install_nc() {
-    tar xf controller-installer*.tar &>/dev/null
-    cp -r controller-installer /home/ncadmin/
-    su - $USER << eof
-    cd /home/ncadmin/controller-installer
-    ./install.sh -n
-eof
+    tar xf controller-installer*.tar
+    cp -r controller-installer $USER_HOME
+    fn_log "copy data to $USER_HOME"
+    chown -R $USER:$USER  $USER_HOME
+    su $USER -s /bin/bash $NC_USER_HOME/helper.sh  prereqs
+    fn_log "Pre-installation dependencies" 
+    su $USER -s /bin/bash $NC_USER_HOME/install.sh 
+    fn_log "nginx_controller install"
+    sleep 3
+    cat /root/.bash_profile | grep "KUBECONFIG" || {
+    echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >> /root/.bash_profile
+    source /root/.bash_profile
+    }
 }
 
 
 function main() {
     log_trap
-    log_info
-    log_warn
     os_prechecks
     add_ncuser
-    install_pkg
     install_nc
 }
 
