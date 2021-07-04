@@ -82,7 +82,7 @@ function os_prechecks() {
     swapoff -a
 
     #configure ssh
-    ssh=$(cat /etc/ssh/sshd_config | grep "UseDNS no")
+    cat /etc/ssh/sshd_config | grep "UseDNS no"
     if [ $? -eq 0 ]; then
         log_info "disabled ssh reverse domain name resolution"
     else
@@ -99,7 +99,7 @@ function add_ncuser() {
     echo $PASSWD | passwd $USER --stdin  &>/dev/null
     fn_log "Add password to $USER"
     chmod 777 /etc/sudoers
-    ncuser=$(cat /etc/sudoers | grep "$USER")
+    cat /etc/sudoers | grep "$USER"
     if [ $? -eq 0 ]; then
        echo  -e "\033[32m $USER is exist \033[0m" 
        log_info "Allow $USER user to execute any command under any path already exists"
@@ -125,8 +125,15 @@ function install_nc() {
     echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >> /root/.bash_profile
     source /root/.bash_profile
     }
+    # Check that the cluster state is normal
+    while true; do
+    kubectl get cs | grep "Healthy"
+    if [ $? = 0 ]; then
+      log_info "the kubernetes cluster is Healthy"
+      break
+    fi
+    done
 }
-
 
 function main() {
     log_trap
