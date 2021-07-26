@@ -1,4 +1,4 @@
-# nginx获取真正的ip
+# nginx7层获取客户端真实ip
 
 首先，一个请求肯定是可以分为请求头和请求体的，而我们客户端的IP地址信息一般都是存储在请求头里的。如果你的服务器有用Nginx做负载均衡的话，你需要在你的location里面配置X-Real-IP和X-Forwarded-For请求头：
 
@@ -34,7 +34,7 @@ X-Forwarded-For变量，这是一个squid开发的，用于识别通过HTTP代�
 
 结构示意图:
 
-![截屏2021-04-08 下午12.05.11](/Users/jinhuaiwang/Library/Application Support/typora-user-images/截屏2021-04-08 下午12.05.11.png)
+![截屏2021-04-08 下午12.05.11](https://github.com/asveg/picture/blob/master/nginx.png?raw=true)
 
 10.122 配置如下:
 
