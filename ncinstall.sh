@@ -13,7 +13,7 @@ HOST_NAME=`hostname`
 LOGFILE="/var/log/nginx_controller_install.log"
 
 # View the directory where the current script is located
-DIR_T="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+BasePath=$(cd `dirname $0`; pwd)
 
 USER="ncadmin"
 PASSWD="ncadmin"
@@ -54,8 +54,6 @@ function log_trap() {
     trap 'fn_log "DO NOT SEND CTR + C WHEN EXECUTE SCRIPT !!!! "' 2
 }
 
-
-
 function os_prechecks() {
 
     # check whether it is root user login
@@ -81,21 +79,34 @@ function os_prechecks() {
     # disable swap parttion
     swapoff -a
 
+    grep "nginxcontroller" /etc/hosts || echo "192.168.10.193 www.nginxcontroller.com" >> /etc/hosts
+
     #configure ssh
-    cat /etc/ssh/sshd_config | grep "UseDNS no"
-    if [ $? -eq 0 ]; then
-        log_info "disabled ssh reverse domain name resolution"
-    else
+    cat /etc/ssh/sshd_config | grep "UseDNS no" || {
         sed -i '/#VersionAddendum none/a\UseDNS no' /etc/ssh/sshd_config
-    fi
+        log_info "disabled ssh reverse domain name resolution"
+    }
     sed -i "s/GSSAPIAuthentication yes/GSSAPIAuthentication no/g" /etc/ssh/sshd_config
     systemctl restart sshd
 }
 
+function install_pkg() {
+    ${BasePath}
+    yum -y localinstall pkg/*
+    fn_log "Load the installation package"
+    systemctl start docker; systemctl enable docker
+    fn_log "start docker"
+}
+
 
 function add_ncuser() {
-    useradd $USER
-    fn_log "Add user $USER"
+    id $USER >& /dev/null
+    if [ $? -eq 0 ];then
+        log_info "$USER is exist."
+    else
+       useradd $USER
+       fn_log "Add user $USER"
+    fi
     echo $PASSWD | passwd $USER --stdin  &>/dev/null
     fn_log "Add password to $USER"
     chmod 777 /etc/sudoers
@@ -104,7 +115,7 @@ function add_ncuser() {
        echo  -e "\033[32m $USER is exist \033[0m" 
        log_info "Allow $USER user to execute any command under any path already exists"
     else
-       sed -i '/^root /a\ncadmin    ALL=(ALL)    ALL' /etc/sudoers
+       sed -i '/^root/a\ncadmin    ALL=(ALL)    ALL' /etc/sudoers
        fn_log "Set allow $USER to run any commands anywhere"
     fi   
     chmod 440 /etc/sudoers
@@ -112,15 +123,20 @@ function add_ncuser() {
 
 # Deployment controller-installer 
 function install_nc() {
+    ${BasePath}
     tar xf controller-installer*.tar
     cp -r controller-installer $USER_HOME
     fn_log "copy data to $USER_HOME"
     chown -R $USER:$USER  $USER_HOME
-    su $USER -s /bin/bash $NC_USER_HOME/helper.sh  prereqs
-    fn_log "Pre-installation dependencies" 
+
+    su $USER << EOF 
+    $NC_USER_HOME/helper.sh  prereqs 
+EOF
+    fn_log "Pre-installation dependencies"
+
     su $USER -s /bin/bash $NC_USER_HOME/install.sh 
-    fn_log "nginx_controller install"
-    sleep 3
+    fn_log "ginx_controller install" 
+
     cat /root/.bash_profile | grep "KUBECONFIG" || {
     echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >> /root/.bash_profile
     source /root/.bash_profile
@@ -139,6 +155,7 @@ function main() {
     log_trap
     os_prechecks
     add_ncuser
+    install_pkg
     install_nc
 }
 
