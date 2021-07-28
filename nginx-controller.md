@@ -65,10 +65,10 @@ NGINX Controller v3需要以下最低硬件规格：
        5. Checking Docker version...
           Docker version 18.09.9, build 039a7df
        6. Config database configuration
-          Do you want to use an embedded config DB? [y/n]: y  # 输入y采用内置的数据库
+          Do you want to use an embedded config DB? [y/n]: y  # y 采用内置的数据库
           Provide config DB volume type [local, nfs, aws]: local  # local指数据库的卷也采用本地
        7. Analytics database configuration 
-          Provide time series DB volume type [local, nfs, aws]: local # #local指时序数据库依然采用本地
+          Provide time series DB volume type [local, nfs, aws]: local  #local指时序数据库依然采用本地
        8. Checking Kubernetes...
           Loading required packages: kubectl
           Checking for required packages: coreutils util-linux iptables socat ebtables ethtool iproute conntrack-tools . All found.
@@ -199,8 +199,7 @@ type: NodePort
 
 6. web登录
 
-浏览器输入https://www.ngxcontroller.com或https://ip，输入之前填写的邮箱和密码，即可登录
-
+浏览器输入`https://www.ngxcontroller.com或https://ip`，填写邮箱和密码，即可登录
 
 
 ## 添加license
