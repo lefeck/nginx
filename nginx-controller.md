@@ -199,7 +199,7 @@ type: NodePort
 
 6. web登录
 
-浏览器输入`https://www.ngxcontroller.com或https://ip`，填写邮箱和密码，即可登录
+浏览器输入`https://www.ngxcontroller.com 或 https://ip`，填写邮箱和密码，即可登录
 
 
 ## 添加license
