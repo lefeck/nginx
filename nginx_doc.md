@@ -95,7 +95,7 @@ yum --showduplicates list nginx | expand
 	
 ```
 yum install nginx -y #安装最新版本
-yum install nginx-1:1.18.0-2.el7.ngx -y #指定特定版本nginx安装
+yum install nginx-1.18.0-2.el7.ngx -y #指定特定版本nginx安装
 ```
 
 ​	
