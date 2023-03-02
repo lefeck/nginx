@@ -4,12 +4,12 @@
 # Using the operating system centos 7
 
 #!/bin/bash
-export PATH=$PATH:/bin:/usr/bin:/usr/local/bin:/usr/sbin:home/test
+export PATH=$PATH:/bin:/usr/bin:/usr/local/bin:/usr/sbin:/home/test
 
 
 # define variable parameter
 NGINX_PATH=/etc/nginx
-BIN_PATH="home/test"
+BIN_PATH="/home/test"
 LOG_PATH="/var/log/nginx"
 NGINX_USER=nginx
 NGINX_GROUP=nginx
